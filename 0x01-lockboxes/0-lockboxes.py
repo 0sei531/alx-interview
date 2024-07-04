@@ -21,10 +21,10 @@ def canUnlockAll(boxes):
     Args:
         boxes (list of lists): A list where each element is a list
                                of keys contained in the corresponding box.
-    
+
     Returns:
         bool: True if all boxes can be opened, False otherwise.
-    
+
     Variables:
         myKeys (list): List to store the keys collected.
         key (int): Current key being used to open boxes.
