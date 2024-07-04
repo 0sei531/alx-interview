@@ -17,7 +17,7 @@ More info:
 def canUnlockAll(boxes):
     """
     Determines if all the boxes can be opened.
-    
+
     Args:
         boxes (list of lists): A list where each element is a list
                                of keys contained in the corresponding box.
