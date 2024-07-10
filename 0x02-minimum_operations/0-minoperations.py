@@ -6,9 +6,11 @@ Given a number n, write a method that calculates the fewest number
 of operations needed to result in exactly n H characters in the file.
 """
 
+
 def minOperations(n):
     """
-    Returns the minimum number of operations needed to achieve exactly n H characters.
+    Returns the minimum number of operations needed to achieve
+    exactly n H characters.
     If n is impossible to achieve, return 0.
     """
     if n < 2:
