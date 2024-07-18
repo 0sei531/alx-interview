@@ -30,6 +30,7 @@ def print_statistics(total_file_size, status_codes_stats):
         if count > 0:
             print(f'{status_code}: {count}', flush=True)
 
+
 def update_metrics(line, total_file_size, status_codes_stats):
     '''Updates the metrics from a given HTTP request log.'''
     line_info = extract_input(line)
@@ -38,21 +39,33 @@ def update_metrics(line, total_file_size, status_codes_stats):
         status_codes_stats[status_code] += 1
     return total_file_size + line_info['file_size']
 
+
 def run():
     '''Starts the log parser.'''
     total_file_size = 0
-    status_codes_stats = {str(code): 0 for code in [200, 301, 400, 401, 403, 404, 405, 500]}
+    status_codes_stats = {
+        '200': 0,
+        '301': 0,
+        '400': 0,
+        '401': 0,
+        '403': 0,
+        '404': 0,
+        '405': 0,
+        '500': 0,
+    }
     line_num = 0
 
     try:
         for line in sys.stdin:
-            total_file_size = update_metrics(line.strip(), total_file_size, status_codes_stats)
+            total_file_size = update_metrics(
+                line.strip(), total_file_size, status_codes_stats)
             line_num += 1
             if line_num % 10 == 0:
                 print_statistics(total_file_size, status_codes_stats)
     except (KeyboardInterrupt, EOFError):
         print_statistics(total_file_size, status_codes_stats)
         raise
+
 
 if __name__ == '__main__':
     run()
