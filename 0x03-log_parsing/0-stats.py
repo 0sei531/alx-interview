@@ -1,39 +1,41 @@
 #!/usr/bin/python3
-'''A script that reads stdin line by line and computes metrics.'''
+"""
+Log parsing
+"""
 
 import sys
 
 
-cache = {
-    '200': 0, '301': 0, '400': 0, '401': 0,
-    '403': 0, '404': 0, '405': 0, '500': 0
-}
-total_size = 0
-counter = 0
+def print_stats(stats, file_size):
+    """Prints the accumulated metrics."""
+    print("File size: {:d}".format(file_size))
+    for k, v in sorted(stats.items()):
+        if v:
+            print("{}: {}".format(k, v))
 
-try:
-    for line in sys.stdin:
-        line_list = line.split()
-        if len(line_list) > 4:
-            code = line_list[-2]
-            size = int(line_list[-1])
-            if code in cache:
-                cache[code] += 1
-            total_size += size
-            counter += 1
 
-        if counter == 10:
-            counter = 0
-            print('File size: {}'.format(total_size))
-            for key, value in sorted(cache.items()):
-                if value != 0:
-                    print('{}: {}'.format(key, value))
+if __name__ == '__main__':
+    filesize, count = 0, 0
+    codes = ["200", "301", "400", "401", "403", "404", "405", "500"]
+    stats = {k: 0 for k in codes}
 
-except Exception as err:
-    pass
-
-finally:
-    print('File size: {}'.format(total_size))
-    for key, value in sorted(cache.items()):
-        if value != 0:
-            print('{}: {}'.format(key, value))
+    try:
+        for line in sys.stdin:
+            count += 1
+            data = line.split()
+            try:
+                status_code = data[-2]
+                if status_code in stats:
+                    stats[status_code] += 1
+            except (IndexError, ValueError):
+                continue
+            try:
+                filesize += int(data[-1])
+            except (IndexError, ValueError):
+                continue
+            if count % 10 == 0:
+                print_stats(stats, filesize)
+        print_stats(stats, filesize)
+    except KeyboardInterrupt:
+        print_stats(stats, filesize)
+        raise
