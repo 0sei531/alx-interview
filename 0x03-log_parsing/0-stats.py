@@ -2,41 +2,37 @@
 """
 Script that reads stdin line by line and computes metrics
 """
+
 import sys
-import re
 
 
 def print_stats(total_size, status_codes):
-    """Print statistics"""
+    """Print accumulated statistics"""
     print(f"File size: {total_size}")
     for code in sorted(status_codes.keys()):
-        if status_codes[code]:
+        if status_codes[code] > 0:
             print(f"{code}: {status_codes[code]}")
 
-
-def parse_line(line):
-    """Parse a line and return file size and status code"""
-    pattern = r'^\S+ - \[.+\] "GET /projects/260 HTTP/1.1" (\d+) (\d+)$'
-    match = re.match(pattern, line)
-    if match:
-        return int(match.group(2)), match.group(1)
-    return 0, None
-
-
-def process_logs():
-    """Process logs from stdin"""
+def main():
     total_size = 0
-    status_codes = {str(code): 0 for code in [200, 301, 400, 401, 403, 404, 405, 500]}
+    status_codes = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
     line_count = 0
 
     try:
         for line in sys.stdin:
-            line = line.strip()
-            size, code = parse_line(line)
-            total_size += size
-            if code in status_codes:
-                status_codes[code] += 1
             line_count += 1
+            data = line.split()
+
+            try:
+                status_code = int(data[-2])
+                file_size = int(data[-1])
+
+                if status_code in status_codes:
+                    status_codes[status_code] += 1
+                total_size += file_size
+
+            except (IndexError, ValueError):
+                pass
 
             if line_count % 10 == 0:
                 print_stats(total_size, status_codes)
@@ -47,6 +43,5 @@ def process_logs():
 
     print_stats(total_size, status_codes)
 
-
 if __name__ == "__main__":
-    process_logs()
+    main()
