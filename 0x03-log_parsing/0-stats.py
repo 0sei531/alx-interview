@@ -72,7 +72,7 @@ def run():
     try:
         for line in sys.stdin:
             total_file_size = update_metrics(line,
-                                             total_file_size, status_codes_stats)
+            total_file_size, status_codes_stats)
             line_num += 1
             if line_num % 10 == 0:
                 print_stats(status_codes_stats, total_file_size)
