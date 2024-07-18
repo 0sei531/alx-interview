@@ -1,41 +1,55 @@
 #!/usr/bin/python3
-"""
-Log parsing
-"""
-
 import sys
+import signal
+import re
 
+total_size = 0
+status_counts = {
+    "200": 0,
+    "301": 0,
+    "400": 0,
+    "401": 0,
+    "403": 0,
+    "404": 0,
+    "405": 0,
+    "500": 0
+}
+line_count = 0
 
-def print_stats(stats, file_size):
-    """Prints the accumulated metrics."""
-    print("File size: {:d}".format(file_size))
-    for k, v in sorted(stats.items()):
-        if v:
-            print("{}: {}".format(k, v))
+# Regular expression to match the log line format
+log_regex = re.compile(r'^.* - \[.*\] "GET /projects/260 HTTP/1.1" (\d{3}) (\d+)$')
 
+def print_stats():
+    """Prints the current statistics."""
+    print(f"File size: {total_size}")
+    for status_code in sorted(status_counts.keys()):
+        count = status_counts[status_code]
+        if count > 0:
+            print(f"{status_code}: {count}")
 
-if __name__ == '__main__':
-    filesize, count = 0, 0
-    codes = ["200", "301", "400", "401", "403", "404", "405", "500"]
-    stats = {k: 0 for k in codes}
+def signal_handler(sig, frame):
+    """Handles the SIGINT signal."""
+    print_stats()
+    sys.exit(0)
 
-    try:
-        for line in sys.stdin:
-            count += 1
-            data = line.split()
-            try:
-                status_code = data[-2]
-                if status_code in stats:
-                    stats[status_code] += 1
-            except (IndexError, ValueError):
-                continue
-            try:
-                filesize += int(data[-1])
-            except (IndexError, ValueError):
-                continue
-            if count % 10 == 0:
-                print_stats(stats, filesize)
-        print_stats(stats, filesize)
-    except KeyboardInterrupt:
-        print_stats(stats, filesize)
-        raise
+# Register the signal handler for SIGINT (CTRL + C)
+signal.signal(signal.SIGINT, signal_handler)
+
+for line in sys.stdin:
+    line = line.strip()
+    match = log_regex.match(line)
+    if match:
+        status_code = match.group(1)
+        file_size = int(match.group(2))
+
+        total_size += file_size
+        if status_code in status_counts:
+            status_counts[status_code] += 1
+
+        line_count += 1
+
+        if line_count % 10 == 0:
+            print_stats()
+
+# Print final stats if there are remaining lines
+print_stats()
