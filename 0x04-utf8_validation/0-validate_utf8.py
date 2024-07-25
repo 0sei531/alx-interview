@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Determines if a given dataset represents a valid UTF-8 encoding"""
 
+
 def validUTF8(data):
     """
     Checks if a list of integers represents a valid UTF-8 encoding.
@@ -27,7 +28,8 @@ def validUTF8(data):
             if nbytes == 0:
                 continue
 
-            # If it's an invalid UTF-8 byte count (1-byte with leading 1 or more than 4 bytes)
+            # If it's an invalid UTF-8 byte count (1-byte with leading 1
+            # or more than 4 bytes)
             if nbytes == 1 or nbytes > 4:
                 return False
 
