@@ -1,46 +1,51 @@
 #!/usr/bin/python3
 import sys
 
-def is_safe(board, row, col, N):
-    # Check this column on upper rows
-    for i in range(row):
-        if board[i][col] == 1:
+
+def is_safe(board, row, col, n):
+    # Check if a queen can be placed on board[row][col]
+
+    # Check this row on left side
+    for i in range(col):
+        if board[row][i] == 1:
             return False
-    
+
     # Check upper diagonal on left side
     for i, j in zip(range(row, -1, -1), range(col, -1, -1)):
         if board[i][j] == 1:
             return False
-    
-    # Check upper diagonal on right side
-    for i, j in zip(range(row, -1, -1), range(col, N)):
+
+    # Check lower diagonal on left side
+    for i, j in zip(range(row, n, 1), range(col, -1, -1)):
         if board[i][j] == 1:
             return False
 
     return True
 
-def solve_nqueens(board, row, N, solutions):
-    if row >= N:
-        solution = []
-        for i in range(N):
-            for j in range(N):
-                if board[i][j] == 1:
-                    solution.append([i, j])
-        solutions.append(solution)
-        return
 
-    for col in range(N):
-        if is_safe(board, row, col, N):
-            board[row][col] = 1
-            solve_nqueens(board, row + 1, N, solutions)
-            board[row][col] = 0
-
-def nqueens(N):
-    board = [[0 for _ in range(N)] for _ in range(N)]
+def solve_nqueens(n):
+    board = [[0 for _ in range(n)] for _ in range(n)]
     solutions = []
-    solve_nqueens(board, 0, N, solutions)
-    for solution in solutions:
-        print(solution)
+
+    def solve(col):
+        if col >= n:
+            solution = []
+            for i in range(n):
+                for j in range(n):
+                    if board[i][j] == 1:
+                        solution.append([i, j])
+            solutions.append(solution)
+            return True
+
+        for i in range(n):
+            if is_safe(board, i, col, n):
+                board[i][col] = 1
+                solve(col + 1)
+                board[i][col] = 0
+
+    solve(0)
+    return solutions
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -48,13 +53,15 @@ if __name__ == "__main__":
         sys.exit(1)
 
     try:
-        N = int(sys.argv[1])
+        n = int(sys.argv[1])
     except ValueError:
         print("N must be a number")
         sys.exit(1)
 
-    if N < 4:
+    if n < 4:
         print("N must be at least 4")
         sys.exit(1)
 
-    nqueens(N)
+    solutions = solve_nqueens(n)
+    for solution in solutions:
+        print(solution)
