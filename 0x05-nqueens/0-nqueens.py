@@ -19,6 +19,7 @@ def print_board(board):
                 solution.append([i, j])
     print(solution)
 
+
 def is_safe(board, row, col, size):
     """
     Checks if placing a queen at (row, col) is safe.
@@ -113,6 +114,7 @@ def main():
     """
     size = validate_and_parse_args(sys.argv)
     solve(size)
+
 
 if __name__ == "__main__":
     main()
