@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import sys
 
+
 def is_safe(matrix, new_row, new_column):
     """
     Determines if a queen is safe to be put in new_row, new_column
@@ -22,6 +23,7 @@ def is_safe(matrix, new_row, new_column):
             return False
     return True
 
+
 def solve(matrix, new_column):
     """
     Recursively solves the N Queens puzzle
@@ -41,6 +43,7 @@ def solve(matrix, new_column):
             matrix[new_row][new_column] = 0
     return None
 
+
 def board_set_up(N):
     """
     Sets up blank NxN chessboard
@@ -55,6 +58,7 @@ def board_set_up(N):
             matrix_row.append(0)
         matrix.append(matrix_row)
     return matrix
+
 
 def print_solution(matrix):
     """
@@ -73,6 +77,7 @@ def print_solution(matrix):
                 queens_coordinates.append(queen)
     print(queens_coordinates)
 
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Usage: nqueens N")
@@ -88,4 +93,3 @@ if __name__ == "__main__":
         exit(1)
     matrix = board_set_up(N)
     solve(matrix, 0)
-
