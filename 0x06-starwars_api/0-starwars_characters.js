@@ -6,7 +6,7 @@ const request = require('request');
 const filmURL = 'https://swapi-api.hbtn.io/api/films/';
 
 // Function to make HTTP GET requests and return a promise
-function fetchData(url) {
+function fetchData (url) {
   return new Promise((resolve, reject) => {
     request(url, (error, response, body) => {
       if (error) {
@@ -21,7 +21,7 @@ function fetchData(url) {
 }
 
 // Function to fetch and display character names for a given film
-async function displayCharacters(movieId) {
+async function displayCharacters (movieId) {
   try {
     // Validate movieId
     if (isNaN(movieId)) {
@@ -47,7 +47,7 @@ async function displayCharacters(movieId) {
 }
 
 // Main function to parse input and invoke character display
-function main() {
+function main () {
   const movieId = process.argv[2];
   if (!movieId) {
     console.error('Usage: ./0-starwars_characters.js <movie_id>');
