@@ -1,36 +1,28 @@
 #!/usr/bin/node
 
-const request = require('request');
+const axios = require('axios');
 
-const filmId = process.argv[2];
-const apiUrl = `https://swapi-api.alx-tools.com/api/films/${filmId}/`;
-
-function fetchCharacterName(url) {
-  return new Promise((resolve, reject) => {
-    request(url, (error, response, body) => {
-      if (error) {
-        reject(error);
-      } else {
-        resolve(JSON.parse(body).name);
-      }
-    });
-  });
+// Check if a movie ID is provided
+if (process.argv.length !== 3) {
+  console.error('Usage: ./0-starwars_characters.js <movie_id>');
+  process.exit(1);
 }
 
-request(apiUrl, async (error, response, body) => {
-  if (error) {
-    console.error(error);
-    return;
-  }
+const movieId = process.argv[2];
+const filmURL = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
 
-  const characters = JSON.parse(body).characters;
+// Fetch film data
+axios.get(filmURL)
+  .then(response => {
+    const characters = response.data.characters;
 
-  try {
-    for (const characterUrl of characters) {
-      const name = await fetchCharacterName(characterUrl);
-      console.log(name);
-    }
-  } catch (err) {
-    console.error('Error fetching character data:', err);
-  }
-});
+    // Fetch character data concurrently
+    return Promise.all(characters.map(characterURL => axios.get(characterURL)));
+  })
+  .then(responses => {
+    // Print each character name
+    responses.forEach(response => console.log(response.data.name));
+  })
+  .catch(error => {
+    console.error('Error:', error.message);
+  });
