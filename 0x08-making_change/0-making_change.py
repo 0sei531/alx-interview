@@ -4,6 +4,7 @@ Determines the fewest number of coins needed to meet a given
 total using a combination of greedy and dynamic programming approaches.
 """
 
+
 def makeChange(coins, total):
     """
     Determines the fewest number of coins needed to meet a given total.
