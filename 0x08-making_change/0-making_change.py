@@ -1,39 +1,43 @@
 #!/usr/bin/python3
 """
-Task: Change comes from within
-Given a pile of coins of different values,
-determine the fewest number of coins needed to
-meet a given amount total.
+Determines the fewest number of coins needed to meet a given
+total using a combination of greedy and dynamic programming approaches.
 """
 
+
 def makeChange(coins, total):
+    
     """
-    Determine the fewest number of coins needed to meet a given amount total.
-
-    Parameters:
-    coins (list): A list of integers representing the coin denominations.
-    total (int): The total amount of money to be made up with the coins.
-
-    Returns:
-    int: The fewest number of coins needed to meet the total. Returns
-         - 0 if total is 0 or less,
-         - -1 if total cannot be met by any number of coins available,
-         - Otherwise, returns the minimum number of coins required.
+    Determines the fewest number of coins needed to meet a given total.
     """
-    # If total is 0 or less, no coins are needed
     if total <= 0:
         return 0
 
-    # Initialize the DP array
-    newVal = total + 1
-    store = [newVal] * (total + 1)
-    store[0] = 0
+    # Sort coins in descending order
+    coins.sort(reverse=True)
 
-    # Fill the DP array
+    # Greedy approach for large values
+    count = 0
+    for coin in coins:
+        while total >= coin:
+            total -= coin
+            count += 1
+
+    if total == 0:
+        return count
+    
+    # Dynamic programming for smaller remaining values
+    dp = [float('inf')] * (total + 1)
+    dp[0] = 0
+
     for i in range(1, total + 1):
         for coin in coins:
-            if i >= coin:
-                store[i] = min(store[i], store[i - coin] + 1)
+            if coin <= i:
+                dp[i] = min(dp[i], dp[i - coin] + 1)
+            else:
+                break  # No need to check larger coins
 
-    # Return the result
-    return store[total] if store[total] <= total else -1
+    if dp[total] == float('inf'):
+        return -1
+
+    return count + dp[total]
