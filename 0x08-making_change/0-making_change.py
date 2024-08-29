@@ -6,7 +6,7 @@ total using a combination of greedy and dynamic programming approaches.
 
 
 def makeChange(coins, total):
-    
+
     """
     Determines the fewest number of coins needed to meet a given total.
     """
@@ -25,7 +25,7 @@ def makeChange(coins, total):
 
     if total == 0:
         return count
-    
+
     # Dynamic programming for smaller remaining values
     dp = [float('inf')] * (total + 1)
     dp[0] = 0
